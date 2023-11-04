@@ -1,0 +1,39 @@
+### Request Product Creation
+POST http://localhost:8082/products
+Content-Type: application/json
+
+{
+  "name": "product_{{$random.alphabetic(10)}}",
+  "value": {{$random.float(10, 1000)}}
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201);
+        client.assert(response.body != null);
+        client.global.set("id_product", response.body.idProduct);
+    })
+%}
+
+### Invalid Request
+POST http://localhost:8082/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "value": {{$random.float(10, 1000)}}
+}
+
+> {%
+    client.test("Request executed unsuccessfully", function() {
+        client.assert(response.status === 400);
+    })
+%}
+
+### GET Products List
+GET http://localhost:8082/products
+Content-Type: application/json
+
+### GET Product by Id
+GET http://localhost:8082/products/{{id_product}}/product
+Content-Type: application/json
